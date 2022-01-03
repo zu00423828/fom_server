@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html >
+<head lang="UTF-8">
+    <meta charset="UTF-8">
+    <title>Upload new File</title>
+</head>
+<body>
+    <h1>&nbsp;智能影片合成</h1>
+    <form action="/job" method="post">
+        <p> &emsp;請選擇使用source image：
+        <select name=source id=source> 
+
+        </select></p> 
+        <p>&emsp;請選擇使用driving video：
+        <select name=driving id=driving>
+        </select></p>
+        <p>&emsp;自適應大小：<input type='checkbox' name='relative' ></p>
+        <p>&emsp;最好的幀數：<input type='checkbox' name='best_frame' ></p>
+        <p>&emsp;<input type="button" onclick="postdata()" value=合成 onchange=""></p>
+    </form>
+</body>
+</html>
+
+
+<script>
+    let jsondata
+    function getdata(){
+        source=document.getElementById("source")
+        driving=document.getElementById("driving")
+        fetch("/data",
+        ).then(res=>{
+            return res.json()
+        }).then(listjson=>{
+            console.log(listjson)
+            i=0
+            source.options[i]=new Option(listjson['source'][0],listjson['source'][0]);
+            driving.options[i]=new Option(listjson['driving'][0],listjson['driving'][0]);
+     
+        });
+        
+    }
+    function postdata() {
+         const fd = new FormData(document.querySelector('form'));
+         console.log(fd)
+         fetch("/job", {
+              method: 'POST',
+              body:fd
+         })
+         .then(res=>{
+            return res.text();
+         }).then(ressult=>{
+            console.log(ressult);
+            if(ressult==1)
+                window.alert("影片合成開始");
+            else
+                window.alert("已經合成過，或是找不到檔案");
+         });
+    }
+
+    window.onload=function(){
+        getdata()
+    }
+</script>
